@@ -1,0 +1,8 @@
+---
+# tasks file for txt_file
+- name: Create text file
+  txt_file:
+    name: '{{ txt_file_name }}'
+    path: '{{ txt_file_path }}'
+    content: '{{ txt_file_content }}'
+    overwrite: '{{ txt_file_overwrite }}'

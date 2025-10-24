@@ -1,0 +1,5 @@
+---
+- name: Example of using the module
+  hosts: localhost
+  roles:
+    - txt_file

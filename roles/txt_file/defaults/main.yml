@@ -1,0 +1,6 @@
+---
+# defaults file for txt_file
+txt_file_name: test_txt_file
+txt_file_path: /tmp
+txt_file_content: ''
+txt_file_overwrite: false
