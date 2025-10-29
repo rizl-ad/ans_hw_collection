@@ -83,9 +83,9 @@ The yc_vm_create module contains the following arguments:
 Dependencies
 ------------
 
-grpcio
-grpcio-tools
-pathlib
+grpcio   
+grpcio-tools   
+pathlib   
 yandexcloud >= 0.364.0
 
 
