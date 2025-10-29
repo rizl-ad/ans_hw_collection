@@ -1,0 +1,93 @@
+---
+# tasks file for vector-role
+- name: Get Vector rpm-package
+  ansible.builtin.get_url:
+    url: https://packages.timber.io/vector/0.50.0/vector-{{ vector_version }}.x86_64.rpm
+    dest: ./vector-{{ vector_version }}.rpm
+    mode: "0644"
+  # ansible.builtin.copy:
+  #   src: ~/vector_pkg/vector-{{ vector_version }}.x86_64.rpm
+  #   dest: ./vector-{{ vector_version }}.rpm
+  #   owner: root
+  #   group: root
+  #   mode: "0644"
+  when: ansible_facts.os_family == "RedHat"
+
+- name: Get Vector deb-package
+  ansible.builtin.get_url:
+    url: https://packages.timber.io/vector/0.50.0/vector_{{ vector_version }}_amd64.deb
+    dest: ./vector-{{ vector_version }}.deb
+    mode: "0644"
+  # ansible.builtin.copy:
+  #   src: ~/vector_pkg/vector_{{ vector_version }}_amd64.deb
+  #   dest: ./vector-{{ vector_version }}.deb
+  #   owner: root
+  #   group: root
+  #   mode: "0644"
+  when: ansible_facts.os_family == "Debian"
+
+- name: Install Vector rpm-package
+  when: ansible_facts.os_family == "RedHat"
+  block:
+    - name: Install rpm-package with package manager
+      become: true
+      ansible.builtin.dnf:
+        disable_gpg_check: true
+        name: vector-{{ vector_version }}.rpm
+  rescue:
+    - name: Install rpm-package without package manager
+      become: false
+      ansible.builtin.shell: yum install -y ./vector-{{ vector_version }}.rpm
+      args:
+        executable: /bin/bash
+      register: inst_state
+      changed_when: inst_state.rc == 0 and "is already installed" not in inst_state.stdout
+
+- name: Install Vector deb-package
+  when: ansible_facts.os_family == "Debian"
+  block:
+    - name: Install deb-package with package manager
+      become: true
+      ansible.builtin.apt:
+        deb: ./vector-{{ vector_version }}.deb
+  rescue:
+    - name: Install deb-package without package manager
+      become: false
+      ansible.builtin.shell: apt install -y ./vector-{{ vector_version }}.deb
+      args:
+        executable: /bin/bash
+      register: inst_state
+      changed_when: inst_state.rc == 0 and "is already installed" not in inst_state.stdout
+
+- name: Checking for systemd
+  ansible.builtin.stat:
+    path: /run/systemd/system
+  register: systemd_check
+
+- name: Checking for init.d
+  ansible.builtin.stat:
+    path: /etc/init.d/vector
+  register: init_check
+  when: not systemd_check.stat.exists
+
+- name: Configure and start Vector service without init system
+  ansible.builtin.template:
+    src: "./templates/vector.j2"
+    dest: "/etc/vector/vector.yaml"
+    mode: "0644"
+  notify: Manual start vector service
+  when:
+    - not systemd_check.stat.exists
+    - not init_check.stat.exists
+
+- name: Configure and start Vector service with init system
+  become: true
+  ansible.builtin.template:
+    src: "./templates/vector.j2"
+    dest: "/etc/vector/vector.yaml"
+    mode: "0644"
+  notify: Enable and start vector service
+  when: systemd_check.stat.exists or init_check.stat.exists
+
+- name: Notify Vector handlers
+  ansible.builtin.meta: flush_handlers

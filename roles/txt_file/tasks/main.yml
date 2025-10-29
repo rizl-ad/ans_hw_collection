@@ -1,7 +1,7 @@
 ---
 # tasks file for txt_file
 - name: Create text file
-  txt_file:
+  rizl_ad.my_collection.txt_file:
     name: '{{ txt_file_name }}'
     path: '{{ txt_file_path }}'
     content: '{{ txt_file_content }}'

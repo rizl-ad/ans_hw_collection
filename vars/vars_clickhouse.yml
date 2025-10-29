@@ -1,0 +1,15 @@
+---
+folder_id: "--your_folder_id--"
+zone: "ru-central1-a"
+vm_name: "ans-test-vm-ch"
+subnet_id: "--your_subnet_id--"
+image_family_id: "ubuntu-2404-lts-oslogin"
+memory: 2
+cores: 2
+core_fraction: 20
+disk_size: 10
+user_name: "--user_name--"
+pub_ssh_key: "~/.ssh/pub-ssh-key"
+priv_ssh_key: "~/.ssh/id_rsa"
+sa_key: "~/.authorized_key.json"
+host_group: "clickhouse"

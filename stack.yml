@@ -1,0 +1,19 @@
+---
+- name: Stack deploy
+  hosts: localhost
+  gather_facts: false
+
+- name: Install Vector
+  hosts: vector
+  roles:
+    - rizl_ad.my_collection.vector
+
+- name: Install Clickhouse
+  hosts: clickhouse
+  roles:
+    - clickhouse
+
+- name: Install nginx & Lighthouse
+  hosts: lighthouse
+  roles:
+    - rizl_ad.my_collection.lighthouse

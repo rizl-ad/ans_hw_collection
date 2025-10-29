@@ -1,0 +1,11 @@
+---
+- name: Read compute instace parameter vars
+  ansible.builtin.include_vars:
+    file: "{{ vm_param_file }}"
+
+- name: Role call
+  ansible.builtin.include_role:
+    name: rizl_ad.my_collection.yc_vm_create
+  vars:
+    vm_params: "{{ vars }}"
+    playbook_dir: "{{ playbook_dir }}"

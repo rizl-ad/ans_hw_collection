@@ -1,0 +1,20 @@
+---
+# handlers file for vector-role
+- name: Manual start vector service
+  ansible.builtin.shell: |
+    if pidof vector; then
+      pkill -f vector
+      sleep 2
+    fi
+    nohup vector > /var/log/vector.log 2>&1 &
+  args:
+    executable: /bin/bash
+  register: result
+  failed_when: result.rc != 0 and result.rc != -15
+
+- name: Enable and start vector service
+  become: true
+  ansible.builtin.service:
+    name: vector
+    enabled: true
+    state: restarted

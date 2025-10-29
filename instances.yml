@@ -1,0 +1,14 @@
+---
+- name: Instances deploy
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Create compute instances
+      ansible.builtin.include_tasks: create_vm.yml
+      loop:
+        - vars_vector.yml
+        - vars_clickhouse.yml
+        - vars_lighthouse.yml
+      loop_control:
+        loop_var: vm_param_file

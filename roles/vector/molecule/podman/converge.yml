@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: molecule
+  gather_facts: true
+
+  roles:
+    - role: ${MOLECULE_PROJECT_DIRECTORY}

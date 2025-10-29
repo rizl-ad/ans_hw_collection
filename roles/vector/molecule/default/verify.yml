@@ -1,0 +1,32 @@
+---
+# Purpose: assert that the instance really ended up in the expected state.
+# Molecule calls this playbook with `molecule verify`.
+- name: Verify
+  hosts: molecule
+  gather_facts: false # Quicker, if you do not need facts
+  tasks:
+    - name: Check vector binary file
+      ansible.builtin.stat:
+        path: /usr/bin/vector
+      register: vector_bin
+
+    - name: Check vector config
+      ansible.builtin.stat:
+        path: /etc/vector/vector.yaml
+      register: vector_conf
+
+    - name: Check vector pid
+      ansible.builtin.shell: pidof vector
+      register: vector_pid
+
+    - name: Check vector version
+      ansible.builtin.shell: vector --version
+      register: vector_version
+
+    - name: Default assert
+      ansible.builtin.assert:
+        that:
+          - vector_bin.stat.exists == true
+          - vector_conf.stat.exists == true
+          - vector_pid.stdout != ""
+          - "'0.50.0' in vector_version.stdout"

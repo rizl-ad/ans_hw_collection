@@ -1,0 +1,29 @@
+---
+# tasks file for yc_vm_create
+- name: Install dependencies
+  ansible.builtin.pip:
+    name:
+      - grpcio
+      - grpcio-tools
+      - pathlib
+      - 'yandexcloud>=0.364.0'
+    executable: pip3
+
+- name: Create YC compute instance
+  # rizl_ad.my_collection.yc_vm_create:
+  yc_vm_create:
+    folder_id: '{{ folder_id }}'
+    zone: '{{ zone }}'
+    subnet_id: '{{ subnet_id }}'
+    vm_name: '{{ vm_name }}'
+    image_family_id: '{{ image_family_id }}'
+    memory: '{{ memory }}'
+    cores: '{{ cores }}'
+    core_fraction: '{{ core_fraction }}'
+    disk_size: '{{ disk_size }}'
+    user_name: '{{ user_name }}'
+    pub_ssh_key: '{{ pub_ssh_key }}'
+    priv_ssh_key: '{{ priv_ssh_key }}'
+    sa_key: '{{ sa_key }}'
+    host_group: '{{ host_group }}'
+    playbook_dir: '{{ playbook_dir }}'
